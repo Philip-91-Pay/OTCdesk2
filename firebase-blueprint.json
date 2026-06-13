@@ -1,0 +1,238 @@
+{
+  "entities": {
+    "trade": {
+      "title": "Trade",
+      "description": "Standardized trade record used in the 91 Payments FX Ops Hub.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID primary key"
+        },
+        "token": {
+          "type": "string",
+          "description": "Unique alphanumeric code format: 91P-XXXX"
+        },
+        "app_initiation_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Uneditable system clock time of code generation"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Pending Reconciliation",
+            "Successfully Executed",
+            "Critical Error: Phantom Token"
+          ],
+          "description": "Workflow state of the trade"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Default to 'Treasury'"
+        },
+        "corridor": {
+          "type": "string",
+          "enum": [
+            "NGN",
+            "GHS",
+            "KES",
+            "XOF",
+            "AOA",
+            "CDF",
+            "VND"
+          ],
+          "description": "Trade payout corridor"
+        },
+        "trade_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Trade Date picker (defaults to current date)"
+        },
+        "value_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Value process date"
+        },
+        "partner": {
+          "type": "string",
+          "enum": [
+            "Nairagram",
+            "Juicyway",
+            "Cosmo Remit",
+            "Chinelo Fx",
+            "Rolla",
+            "Lilian",
+            "Alex Adino",
+            "Regulus",
+            "Starks",
+            "Vgg",
+            "Fincra",
+            "Blusalt"
+          ],
+          "description": "Merchant/beneficiary name"
+        },
+        "source_bank": {
+          "type": "string",
+          "description": "Source bank providing/processing the funds"
+        },
+        "trade_type": {
+          "type": "string",
+          "enum": [
+            "Buy",
+            "Sell"
+          ],
+          "description": "Buy vs Sell trade type"
+        },
+        "currency": {
+          "type": "string",
+          "enum": [
+            "USD",
+            "USDC",
+            "EUR",
+            "GBP"
+          ],
+          "description": "Traded currency"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Payment volume transacted"
+        },
+        "rate": {
+          "type": "number",
+          "description": "Applied exchange rate"
+        },
+        "ngn_equi": {
+          "type": "number",
+          "description": "Equivalent calculated field (Amount * Rate)"
+        },
+        "destination_account": {
+          "type": "string",
+          "description": "Final beneficiary payment details"
+        },
+        "beneficiary_account": {
+          "type": "string",
+          "description": "The 91-Pay collection account used"
+        },
+        "bank_executed_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Manual time entry matching the bank portal's transaction slip"
+        },
+        "ngn_received_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "System logged timestamp for NGN received"
+        },
+        "usd_payout_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "System logged timestamp for USD payout"
+        },
+        "cancelled_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "System logged timestamp for trade cancellation"
+        },
+        "reconciled_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time when EOD reconciliation was validated and submitted"
+        },
+        "sla_status": {
+          "type": "string",
+          "enum": [
+            "On Time",
+            "SLA Breach"
+          ],
+          "description": "Calculated SLA status"
+        },
+        "sla_elapsed_minutes": {
+          "type": "number",
+          "description": "Calculated operational minutes elapsed"
+        }
+      },
+      "required": [
+        "id",
+        "token",
+        "app_initiation_timestamp",
+        "status"
+      ]
+    },
+    "bank_detail": {
+      "title": "BankDetail",
+      "description": "Settlement bank detail configured by desk supervisor.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID primary key"
+        },
+        "accountName": {
+          "type": "string",
+          "description": "Standardized beneficiary name on the bank account"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number coordinates"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the banking institution"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Standard or digital settlement currency"
+        }
+      },
+      "required": [
+        "id",
+        "accountName",
+        "accountNumber",
+        "bankName",
+        "currency"
+      ]
+    },
+    "client": {
+      "title": "ClientDetail",
+      "description": "Corporate client partner configuration directory.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID primary key"
+        },
+        "name": {
+          "type": "string",
+          "description": "Client / Institution Name"
+        },
+        "email": {
+          "type": "string",
+          "description": "Optional contact email"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Internal notes"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    }
+  },
+  "firestore": {
+    "trades": {
+      "schema": "trade",
+      "description": "Blotter database of transactional FX records"
+    },
+    "bank_details": {
+      "schema": "bank_detail",
+      "description": "Registered bank settlement coordinates directories"
+    },
+    "clients": {
+      "schema": "client",
+      "description": "Registered corporate client configuration directories"
+    }
+  }
+}

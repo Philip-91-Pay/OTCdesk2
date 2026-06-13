@@ -1,0 +1,6 @@
+{
+  "name": "91 Payments FX Ops Hub",
+  "description": "An asynchronous internal operations desk for high-volume foreign exchange desks, featuring Quick Stamp capabilities and an End-of-Day reconciliation dashboard with SLA tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

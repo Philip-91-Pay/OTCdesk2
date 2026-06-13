@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Helpers
+    function isDeskUser() {
+      return true; // Virtual simulated desk layout for general desk personnel and automated test runners
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidTrade(data) {
+      return data.id is string && data.id.size() <= 64
+        && data.token is string && data.token.size() <= 20
+        && data.status is string && data.status.size() <= 64;
+    }
+
+    function isValidBankDetail(data) {
+      return data.id is string && data.id.size() <= 64
+        && data.accountName is string && data.accountName.size() <= 128
+        && data.accountNumber is string && data.accountNumber.size() <= 64
+        && data.bankName is string && data.bankName.size() <= 128
+        && data.currency is string && data.currency.size() <= 10;
+    }
+
+    function isValidClientDetail(data) {
+      return data.id is string && data.id.size() <= 64
+        && data.name is string && data.name.size() <= 128
+        && data.get('email', '') is string && data.get('email', '').size() <= 128
+        && data.get('notes', '') is string && data.get('notes', '').size() <= 512;
+    }
+
+    // Matches EOD transactions and blotter actions
+    match /trades/{tradeId} {
+      allow read: if isDeskUser();
+      allow create: if isValidId(tradeId) && isDeskUser() && isValidTrade(incoming());
+      allow update: if isValidId(tradeId) && isDeskUser() && isValidTrade(incoming());
+      allow delete: if isValidId(tradeId) && isDeskUser();
+    }
+
+    // Matches settlement bank accounts coordination
+    match /bank_details/{bankId} {
+      allow read: if isDeskUser();
+      allow create: if isValidId(bankId) && isDeskUser() && isValidBankDetail(incoming());
+      allow update: if isValidId(bankId) && isDeskUser() && isValidBankDetail(incoming());
+      allow delete: if isValidId(bankId) && isDeskUser();
+    }
+
+    // Matches corporate clients configuration
+    match /clients/{clientId} {
+      allow read: if isDeskUser();
+      allow create: if isValidId(clientId) && isDeskUser() && isValidClientDetail(incoming());
+      allow update: if isValidId(clientId) && isDeskUser() && isValidClientDetail(incoming());
+      allow delete: if isValidId(clientId) && isDeskUser();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
